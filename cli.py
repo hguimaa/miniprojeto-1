@@ -16,11 +16,19 @@ def mostrar_usuarios(catalogo):
 
         print()
 
+def mostrar_playlist(catalogo, nome_usuario: str):
+    id_usuario = catalogo.buscar_usuario_por_nome(nome_usuario)
+    playlist = catalogo.playlist_de(id_usuario)
+
+    print(f'Playlist de {nome_usuario} ({len(playlist)} músicas)\n')
+
+    for i, conteudo_id in enumerate(playlist, start=1):
+        conteudo = catalogo.buscar_conteudo_por_id(conteudo_id)
+        print(f'{i}. {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]})')
 
 def main():
     catalogo = Catalogo("catalogo_dev.json")
 
-    mostrar_usuarios(catalogo)
 
 
 if __name__ == "__main__":
