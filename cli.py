@@ -61,9 +61,28 @@ def mostrar_intersecao(catalogo):
         conteudo = catalogo.buscar_conteudo_por_id(id_conteudo)
         print(f"- {conteudo["titulo"]} — {conteudo["artista"]} — {conteudo["tipo"]} — {conteudo["id"]}")
 
+def mostrar_dados_conteudo(catalogo):
+    id_conteudo = input("ID do conteúdo (ex.: t000001): ").strip().lower()
+    conteudo = catalogo.buscar_conteudo_por_id(id_conteudo)
+    rating = catalogo.rating_de(id_conteudo)
+    duracao_secs = catalogo.duracao_total_de(id_conteudo)
+    generos = catalogo.generos_de(id_conteudo)
+
+    print(f'{conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
+    print(f'rating: {rating}')
+
+    duracao_mins = 0
+    while duracao_secs > 60:
+        duracao_mins +=1
+        duracao_secs -= 60
+    print(f'duração: {duracao_mins}m{duracao_secs}s')
+
+    print(f'gêneros: {", ".join(generos)}')
+
+
+
 def main():
     catalogo = Catalogo("catalogo_dev.json")
-
-
+    mostrar_dados_conteudo(catalogo)
 if __name__ == "__main__":
     main()
