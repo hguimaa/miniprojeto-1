@@ -10,8 +10,11 @@ class Catalogo:
         self.usuarios = dados["usuarios"]
 
         self.conteudos_por_id = {}
+        self.conteudos_por_genero = {}
         for conteudo in self.conteudos:
             self.conteudos_por_id[conteudo["id"]] = conteudo
+            for genero in self.generos_de(conteudo["id"]):
+                self.conteudos_por_genero.setdefault(genero, []).append(conteudo["id"])
 
         self.usuarios_por_id = {}
         self.usuarios_por_nome = {}
@@ -105,7 +108,9 @@ class Catalogo:
                 self.achatar_generos(genero, resultado)
             else:
                 resultado.append(genero)
+
     def generos_de(self, conteudo_id: str) -> list[str]:
+
         conteudo = self.conteudos_por_id.get(conteudo_id)
 
         if conteudo is None:
@@ -121,4 +126,46 @@ class Catalogo:
 
         lista_generos = []
         self.achatar_generos(generos, lista_generos)
-        return lista_generos
+        return sorted(lista_generos)
+    
+    def plataformas_de(self, conteudo_id: str) -> list[str] | None:
+        conteudo = self.conteudos_por_id.get(conteudo_id)
+        if conteudo is None:
+            return None
+        plataformas = conteudo.get("plataformas")
+        if plataformas:
+            return sorted(plataformas)
+        return []
+    
+    def data_adicionado_de(self, conteudo_id: str) -> str | None:
+        conteudo = self.conteudos_por_id.get(conteudo_id)
+        if conteudo is None:
+            return None
+        
+        data = conteudo.get("data_adicionado")
+        if "-" in data:
+            ano, mes, dia = data.split("-")
+        else:
+            dia, mes, ano = data.split("/")
+        return f"{ano}-{mes}-{dia}"
+    
+    def execucoes_de(self, conteudo_id: str) -> int | None:
+        conteudo = self.conteudos_por_id.get(conteudo_id)
+        if conteudo is None:
+            return None
+        engajamento = conteudo.get("engajamento")
+        if engajamento is None:
+            return None
+
+        execucoes = engajamento.get("execucoes")
+        if type(execucoes) != int and"," in execucoes:
+            string_limpa = ""
+            for caractere in execucoes:
+                if caractere != ",":
+                    string_limpa += caractere
+        else:
+            string_limpa = execucoes
+        return int(string_limpa)
+
+    def conteudos_do_genero(self, genero: str) -> list[str]:
+        return self.conteudos_por_genero.get(genero, [])

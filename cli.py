@@ -63,26 +63,54 @@ def mostrar_intersecao(catalogo):
 
 def mostrar_dados_conteudo(catalogo):
     id_conteudo = input("ID do conteúdo (ex.: t000001): ").strip().lower()
+
     conteudo = catalogo.buscar_conteudo_por_id(id_conteudo)
+
+    if conteudo is not None:
+        print(f'{conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]})')
+    else:
+        print("Conteúdo: —")
+
     rating = catalogo.rating_de(id_conteudo)
+    print(f'rating: {rating if rating is not None else "—"}')
+
     duracao_secs = catalogo.duracao_total_de(id_conteudo)
+    if duracao_secs is not None:
+        minutos = duracao_secs // 60
+        segundos = duracao_secs % 60
+        duracao = f"{minutos}m{segundos}s"
+    else:
+        duracao = "—"
+    print(f'duração: {duracao}')
+
     generos = catalogo.generos_de(id_conteudo)
+    print(f'gêneros: {", ".join(generos) if generos else "—"}')
 
-    print(f'{conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
-    print(f'rating: {rating}')
+    plataformas = catalogo.plataformas_de(id_conteudo)
+    print(f'plataformas: {", ".join(plataformas) if plataformas else "—"}')
 
-    duracao_mins = 0
-    while duracao_secs > 60:
-        duracao_mins +=1
-        duracao_secs -= 60
-    print(f'duração: {duracao_mins}m{duracao_secs}s')
+    data = catalogo.data_adicionado_de(id_conteudo)
+    print(f'adicionado em: {data if data is not None else "—"}')
 
-    print(f'gêneros: {", ".join(generos)}')
+    execucoes = catalogo.execucoes_de(id_conteudo)
 
+    if execucoes is not None:
+        execucoes = f"{execucoes:,}".replace(",", ".")
 
+    print(f"execuções: {execucoes if execucoes is not None else '—'}")
+
+def mostrar_conteudos_do_genero(catalogo):
+    genero = input("Gênero (ex.: Pop): ").strip()
+
+    conteudos_ids = catalogo.conteudos_do_genero(genero)
+
+    print(f'\n{len(conteudos_ids)} conteúdos em "{genero}":\n')
+
+    for conteudo_id in conteudos_ids:
+        conteudo = catalogo.buscar_conteudo_por_id(conteudo_id)
+        print(f'- {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]}) ({conteudo["id"]})')
 
 def main():
     catalogo = Catalogo("catalogo_dev.json")
-    mostrar_dados_conteudo(catalogo)
 if __name__ == "__main__":
     main()
