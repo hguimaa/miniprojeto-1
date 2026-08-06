@@ -141,5 +141,52 @@ def mostrar_fila(catalogo):
 
 def main():
     catalogo = Catalogo("catalogo_dev.json")
+
+    opcoes = {
+        "1": mostrar_usuarios,
+        "2": mostrar_playlist,
+        "3": mostrar_posicao,
+        "4": mostrar_intersecao,
+        "5": mostrar_dados_conteudo,
+        "6": mostrar_conteudos_do_genero,
+        "7": enfileirar_conteudo,
+        "8": tocar_proximo,
+        "9": mostrar_fila,
+    }
+
+    while True:
+        print("""
+Trilha Sonora
+_____________
+
+1. Listar todos os usuários
+2. Ver playlist completa de um usuário
+3. Conteúdo na posição N da playlist
+4. Interseção de playlists (N usuários)
+5. Dados de um conteúdo (rating, duração, gêneros, plataformas, data, execuções)
+6. Conteúdos de um gênero
+7. Enfileirar conteúdo na fila de reprodução
+8. Tocar próximo da fila
+9. Ver fila atual
+
+0. Sair
+""")
+
+        opcao = input("> ").strip()
+
+        if opcao == "0":
+            print("Encerrando...")
+            break
+
+        funcao = opcoes.get(opcao)
+
+        if funcao is None:
+            print("\nOpção inválida.\n")
+            continue
+
+        print()
+        funcao(catalogo)
+
+        print("\n" + "=" * 50 + "\n")
 if __name__ == "__main__":
     main()
