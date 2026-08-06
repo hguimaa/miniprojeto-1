@@ -30,7 +30,13 @@ def mostrar_playlist(catalogo):
 def mostrar_posicao(catalogo):
     nome_usuario = input("Nome do usuário: ").strip().lower()
     id_usuario = catalogo.buscar_usuario_por_nome(nome_usuario)
+
+    if id_usuario is None:
+        print(f'ID inválido.')
+        return
     playlist = catalogo.playlist_de(id_usuario)
+    
+    
     print(f"Playlist de {nome_usuario} tem {len(playlist)} itens. (Posições de 1 a {len(playlist)})")
 
     try:
@@ -38,7 +44,7 @@ def mostrar_posicao(catalogo):
     except ValueError:
         print("Insira uma posição válida.")
         return
-    id_conteudo = catalogo.conteudo_na_posicao(id_usuario, posicao)
+    id_conteudo = catalogo.conteudo_na_posicao(id_usuario, posicao+1)
     conteudo = catalogo.buscar_conteudo_por_id(id_conteudo)
 
     print(f'Posição {posicao} de {nome_usuario}: {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]})')
@@ -123,24 +129,24 @@ def enfileirar_conteudo(catalogo):
     print(f'Enfileirado: {conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
 
 def tocar_proximo(catalogo):
-    conteudo = catalogo.buscar_conteudo_por_id(catalogo.fila_atual[0])
-    if not catalogo.fila_atual:
+    conteudo = catalogo.buscar_conteudo_por_id(catalogo.lista_fila_atual[0])
+    if not catalogo.lista_fila_atual:
         print("Fila vazia.")
         return
     print(f'Tocando: {conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
     catalogo.proximo()
 
 def mostrar_fila(catalogo):
-    if not catalogo.fila_atual:
+    if not catalogo.lista_fila_atual:
         print("Fila vazia.")
         return
-    print(f'\nFila atual ({len(catalogo.fila_atual)} itens, próximo primeiro):')
-    for i, conteudo_id in enumerate(catalogo.fila_atual, start = 1):
+    print(f'\nFila atual ({len(catalogo.lista_fila_atual)} itens, próximo primeiro):')
+    for i, conteudo_id in enumerate(catalogo.lista_fila_atual, start = 1):
         conteudo = catalogo.buscar_conteudo_por_id(conteudo_id)
         print(f'{i}. {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]})')
 
 def main():
-    catalogo = Catalogo("catalogo_dev.json")
+    catalogo = Catalogo("catalogo_final.json")
 
     opcoes = {
         "1": mostrar_usuarios,

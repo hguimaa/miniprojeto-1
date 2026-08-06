@@ -23,7 +23,7 @@ class Catalogo:
             self.usuarios_por_id[usuario["id"]] = usuario
             self.usuarios_por_nome[usuario["nome"].lower()] = usuario
         
-        self.fila_atual = []
+        self.lista_fila_atual = []
     
     # -----Usuários e playlists-----
     def listar_usuarios(self) -> list[str]:
@@ -49,10 +49,10 @@ class Catalogo:
         if playlist is None:
             return None
 
-        if posicao < 1 or posicao > len(playlist):
+        if posicao < 0 or posicao >= len(playlist):
             return None
 
-        return playlist[posicao - 1]
+        return playlist[posicao]
     
     def intersecao_playlists(self, usuario_ids: list[str]) -> list[str]:
         if len(usuario_ids) < 2:
@@ -111,12 +111,12 @@ class Catalogo:
             else:
                 resultado.append(genero)
 
-    def generos_de(self, conteudo_id: str) -> list[str]:
+    def generos_de(self, conteudo_id: str) -> list[str] | None:
 
         conteudo = self.conteudos_por_id.get(conteudo_id)
 
         if conteudo is None:
-            return []
+            return None
 
         generos = conteudo.get("generos")
 
@@ -179,15 +179,15 @@ class Catalogo:
         if conteudo is None:
             return False
 
-        self.fila_atual.append(conteudo_id)
+        self.lista_fila_atual.append(conteudo_id)
         return True
 
     def proximo(self) -> str | None:
-        if not self.fila_atual:
+        if not self.lista_fila_atual:
             return None
-        return self.fila_atual.pop(0)
+        return self.lista_fila_atual.pop(0)
     
     def fila_atual(self) -> list[str]:
-        if not self.fila_atual:
+        if not self.lista_fila_atual:
             return []
-        return self.fila_atual
+        return self.lista_fila_atual
