@@ -92,12 +92,13 @@ def mostrar_dados_conteudo(catalogo):
     data = catalogo.data_adicionado_de(id_conteudo)
     print(f'adicionado em: {data if data is not None else "—"}')
 
-    execucoes = catalogo.execucoes_de(id_conteudo)
+    if conteudo is not None and conteudo["tipo"] == "musica":
+        execucoes = catalogo.execucoes_de(id_conteudo)
 
-    if execucoes is not None:
-        execucoes = f"{execucoes:,}".replace(",", ".")
+        if execucoes is not None:
+            execucoes = f"{execucoes:,}".replace(",", ".")
 
-    print(f"execuções: {execucoes if execucoes is not None else '—'}")
+        print(f"execuções: {execucoes if execucoes is not None else '—'}")
 
 def mostrar_conteudos_do_genero(catalogo):
     genero = input("Gênero (ex.: Pop): ").strip()
@@ -109,6 +110,34 @@ def mostrar_conteudos_do_genero(catalogo):
     for conteudo_id in conteudos_ids:
         conteudo = catalogo.buscar_conteudo_por_id(conteudo_id)
         print(f'- {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]}) ({conteudo["id"]})')
+
+def enfileirar_conteudo(catalogo):
+    id_conteudo = input("ID do conteúdo (ex.: t000001): ").strip()
+
+    conteudo = catalogo.buscar_conteudo_por_id(id_conteudo)
+
+    if conteudo is None:
+        print(f"Conteúdo {id_conteudo} não existe.")
+        return
+    catalogo.enfileirar(id_conteudo)
+    print(f'Enfileirado: {conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
+
+def tocar_proximo(catalogo):
+    conteudo = catalogo.buscar_conteudo_por_id(catalogo.fila_atual[0])
+    if not catalogo.fila_atual:
+        print("Fila vazia.")
+        return
+    print(f'Tocando: {conteudo["titulo"]} — {conteudo["artista"]} — ({conteudo["tipo"]})')
+    catalogo.proximo()
+
+def mostrar_fila(catalogo):
+    if not catalogo.fila_atual:
+        print("Fila vazia.")
+        return
+    print(f'\nFila atual ({len(catalogo.fila_atual)} itens, próximo primeiro):')
+    for i, conteudo_id in enumerate(catalogo.fila_atual, start = 1):
+        conteudo = catalogo.buscar_conteudo_por_id(conteudo_id)
+        print(f'{i}. {conteudo["titulo"]} — {conteudo["artista"]} ({conteudo["tipo"]})')
 
 def main():
     catalogo = Catalogo("catalogo_dev.json")

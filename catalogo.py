@@ -22,6 +22,8 @@ class Catalogo:
         for usuario in self.usuarios:
             self.usuarios_por_id[usuario["id"]] = usuario
             self.usuarios_por_nome[usuario["nome"].lower()] = usuario
+        
+        self.fila_atual = []
     
     # -----Usuários e playlists-----
     def listar_usuarios(self) -> list[str]:
@@ -169,3 +171,23 @@ class Catalogo:
 
     def conteudos_do_genero(self, genero: str) -> list[str]:
         return self.conteudos_por_genero.get(genero, [])
+
+    #-----Fila de reprodução------
+
+    def enfileirar(self, conteudo_id: str) -> bool:
+        conteudo = self.conteudos_por_id.get(conteudo_id)
+        if conteudo is None:
+            return False
+
+        self.fila_atual.append(conteudo_id)
+        return True
+
+    def proximo(self) -> str | None:
+        if not self.fila_atual:
+            return None
+        return self.fila_atual.pop(0)
+    
+    def fila_atual(self) -> list[str]:
+        if not self.fila_atual:
+            return []
+        return self.fila_atual
